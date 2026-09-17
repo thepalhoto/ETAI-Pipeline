@@ -1,5 +1,10 @@
 # 20231639 Goncalo Palhoto
 
+# Comparison 0
+Logistic Regression outperformed the Decision Tree across all key metrics. It achieved higher test accuracy (67.8% vs. 63.1%) and avoided the Decision Tree's overfitting (82.9% train vs. 63.1% test). It also caught significantly more cases of reoffenders, with a recall of 0.60 compared to the tree's 0.49 (less than half).
+
+COMPAS originally mislabeled Black defendants as "high risk" far more often than White defendants, presenting a 19% gap. Logistic Regression narrowed it down to 9%.
+
 # Baseline Predictive Pipeline -- ETAI
 
 This is the **starting point** for your semester project: a small but *complete* predictive pipeline -- every piece a real project needs (entry point, config, data loading, preprocessing, model, evaluation), just kept as simple as possible for now.
