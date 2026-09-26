@@ -1,9 +1,30 @@
-# 20231639 Goncalo Palhoto
+# Goncalo Palhoto - 20231639
+
+## Overview
+
+This project predicts whether a person will be arrested for a new offence within two years using the ProPublica COMPAS dataset. It provides a reproducible, configuration-driven pipeline for loading and cleaning the data, applying leak-safe preprocessing, training a classifier, evaluating predictive performance, checking false-positive rates by race, and saving each run's report.
+
+The current pipeline compares logistic regression with a decision tree after diagnosis-driven preprocessing. Logistic regression is the stronger current model: it reaches 65.7% test accuracy with only a 1.9 percentage-point train/test gap, while the decision tree reaches 61.5% test accuracy with a 17.7 percentage-point gap.
+
+## Pipeline progress
+
+The pipeline has progressed from a simple baseline into a more robust and auditable workflow. The current version validates domain values, canonicalizes categories, removes duplicates and redundant predictors, handles missingness inside a training-only preprocessing pipeline, and reports both predictive and race-based fairness metrics. Model choice and preprocessing settings remain in `config.yaml`, so experiments can be repeated without changing source code.
+
+## Preprocessing decisions
+
+The updated preprocessing is diagnosis-driven and leak-safe. Invalid values and placeholder tokens are converted to missing values before imputation; categorical labels are canonicalized; exact duplicates and the redundant columns `prior_offenses`, `age_in_months`, and `juvenile_total` are removed. Numeric variables use median imputation, categorical variables use most-frequent imputation, and missingness indicators are retained for `priors_count` and `c_charge_degree`, whose missingness showed an MNAR relationship. Target encoding and standard scaling are configured for the model pipeline, with `race` excluded from model features and retained for fairness auditing.
 
 # Comparison 0
 Logistic Regression outperformed the Decision Tree across all key metrics. It achieved higher test accuracy (67.8% vs. 63.1%) and avoided the Decision Tree's overfitting (82.9% train vs. 63.1% test). It also caught significantly more cases of reoffenders, with a recall of 0.60 compared to the tree's 0.49 (less than half).
 
 COMPAS originally mislabeled Black defendants as "high risk" far more often than White defendants, presenting a 19% gap. Logistic Regression narrowed it down to 9%.
+
+# Comparison 1 (updated preprocessing)
+After the diagnosis-driven preprocessing was introduced, Logistic Regression remained the stronger model. It achieved 0.657 test accuracy versus 0.615 for the Decision Tree, and its train/test gap was much smaller (1.9 percentage points versus 17.7 percentage points), indicating substantially less overfitting. Logistic Regression also had slightly higher recall for reoffenders (0.48 versus 0.46).
+
+The updated preprocessing reduced the model's false-positive-rate gap between African-American and Caucasian defendants to 14 percentage points for Logistic Regression (0.28 versus 0.14) and 10 percentage points for the Decision Tree (0.32 versus 0.22). Both models remained below COMPAS's corresponding rates for these groups, although the tree's lower overall accuracy and larger generalisation gap made Logistic Regression the preferable current model.
+
+
 
 # Baseline Predictive Pipeline -- ETAI
 
